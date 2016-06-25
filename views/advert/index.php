@@ -156,6 +156,7 @@ $sortBy = [
             'filterModel' => $searchModel,
             'showHeader' => false,
             'summaryOptions'=> ['style' => 'margin-bottom: 15px; margin-top: 20px;'],
+            'tableOptions' => ['class' => 'table table-striped table-hover'],
             'columns' => [
                 [
                     'label' => 'image',
@@ -183,8 +184,10 @@ $sortBy = [
                     'attribute' => 'price',
                     'format' => 'html',
                     'value' => function($data) {
+                        $cur = Yii::$app->user->isGuest ? 'USD' : strtoupper(Yii::$app->user->identity->getCurrency());
+
                         return '<strong class="advert-title">' . Advert::countPrice($data->id) . 
-                        ' </strong><strong>' . strtoupper(Yii::$app->user->identity->getCurrency()) . '</strong>';
+                        ' </strong><strong>' . $cur . '</strong>';
                     },
                     'options' => ['class' => 'column'],
                 ],

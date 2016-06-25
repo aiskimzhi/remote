@@ -21,7 +21,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link href="/css/custom.css" rel="stylesheet" type="text/css">
+    <link href="/web/css/custom.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -37,6 +37,7 @@ AppAsset::register($this);
     ]);
     if (Yii::$app->user->isGuest) {
         $items = [
+            ['label' => 'Adverts', 'url' => ['/adverts']],
             ['label' => 'Login', 'url' => ['/site/login']],
             ['label' => 'Sign Up', 'url' => ['/site/signup']]
         ];
@@ -104,7 +105,7 @@ AppAsset::register($this);
 </footer>
 
 <?php $this->endBody() ?>
-<script src="/js/custom.js" type="text/javascript"></script>
+<script src="/web/js/custom.js" type="text/javascript"></script>
 </body>
 </html>
 <?php $this->endPage() ?>

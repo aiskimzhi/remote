@@ -43,6 +43,11 @@ class User extends ActiveRecord implements IdentityInterface
             [['first_name', 'last_name', 'email', 'password', 'phone', 'skype'], 'string', 'max' => 255],
             ['password_reset_token', 'string', 'max' => 64],
             ['password_reset_token', 'unique'],
+            [
+                ['first_name', 'last_name', 'email', 'phone', 'skype'], 'match',
+                'pattern' => '/<script>/', 'not' => true,
+                'message' => 'This field should not contain next symbols: ` ~ @ # $ % ^ & * / \\ < >',
+            ],
         ];
     }
 
@@ -88,90 +93,11 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Validates entered password
-     *
-     * @param $password
-     * @return bool
+     * @return int
      */
-    public function validatePassword($password)
-    {
-        return Yii::$app->security->validatePassword($password, $this->password);
-    }
-
-    /**
-     * Finds user by [[email]]
-     *
-     * @param $email
-     * @return null|static
-     */
-    public static function findByEmail($email)
-    {
-        return static::findOne(['email' => $email]);
-    }
-
-    //Taken frm IdentityInterface
-    public static function findIdentity($id)
-    {
-        return static::findOne($id);
-    }
-
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        return static::findOne(['access_token' => $token]);
-    }
-
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getPasswordResetToken()
-    {
-        return $this->password_reset_token;
-    }
-
-    public function validatePasswordResetToken($password_reset_token)
-    {
-        return $this->password_reset_token === $password_reset_token;
-    }
-
-    public function getAuthKey()
-    {
-        return true;
-    }
-
-    public function validateAuthKey($authkey)
-    {
-        return true;
-    }
-
-    /**
-     * Generates Full Name to show in Logout
-     *
-     * @return string
-     */
-    public function getFullName()
-    {
-        return $this->first_name . ' ' . $this->last_name;
-    }
-
-    /**
-     * Generates passwordHash
-     *
-     * @param $password
-     * @throws \yii\base\Exception
-     */
-    public function setPassword($password)
-    {
-        $this->password = Yii::$app->security->generatePasswordHash($password);
-    }
-
-    /**
-     * Generates password reset token
-     */
-    public function generatePasswordResetToken()
-    {
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     /**
@@ -186,8 +112,98 @@ class User extends ActiveRecord implements IdentityInterface
         return $user->currency;
     }
 
+    /**
+     * Generates Full Name to show in Logout
+     *
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    /**
+     * Finds user by [[email]]
+     *
+     * @param $email
+     * @return null|static
+     */
+    public static function findByEmail($email)
+    {
+        return static::findOne(['email' => $email]);
+    }
+
+    /**
+     * @param int|string $id
+     * @return null|static
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    /**
+     * Generates passwordHash
+     *
+     * @param $password
+     * @throws \yii\base\Exception
+     */
+    public function setPassword($password)
+    {
+        $this->password = Yii::$app->security->generatePasswordHash($password);
+    }
+
+    /**
+     * Validates entered password
+     *
+     * @param $password
+     * @return bool
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password);
+    }
+
+    /**
+     * Generates password reset token
+     */
+    public function generatePasswordResetToken()
+    {
+        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPasswordResetToken()
+    {
+        return $this->password_reset_token;
+    }
+
+    /**
+     * @param $password_reset_token
+     * @return bool
+     */
+    public function validatePasswordResetToken($password_reset_token)
+    {
+        return $this->password_reset_token === $password_reset_token;
+    }
+
+    /**
+     * removes password_reset_token
+     */
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getAuthKey()
+    {
+        return true;
+    }
+
+    public function validateAuthKey()
+    {
+        return true;
     }
 }

@@ -1,28 +1,30 @@
 <?php
 
 /* @var $rates */
-$this->title = 'Site/Index';
+$this->title = 'Welcome!';
 ?>
 
 <div id="index-page" style="position: relative; overflow: hidden;">
     <div id="index-info" style="position: inherit; float: left;">
-        <h1 id="welcome">Welcome to EURICA!</h1>
+        <h1 id="welcome">Welcome to EURECA!</h1>
 
         <div class="index-info">
             <span class="glyphicon glyphicon-question-sign glyphicon-index"></span>
             <p class="index-page-1">
-                You need to place an advert about selling your goods or services but don’t know where?
+                Need to sell your goods or services but don’t how and know where?
             </p>
 
             <span class="glyphicon glyphicon-question-sign glyphicon-index"></span>
-            <p class="index-page-1">You are looking for something but still can’t find?</p>
+            <p class="index-page-1">Looking for something but still can’t find?</p>
 
             <span class="glyphicon glyphicon-question-sign glyphicon-index"></span>
-            <p class="index-page-1">You need to join EURICA!</p>
+            <p class="index-page-1">Join EURECA!</p>
         </div>
 
         <div class="index-info">
-            <p class="index-page-2">After you <a href="signup.php"><strong>Sign Up</strong></a> you will be able to:</p>
+            <p class="index-page-2"><a href="signup.php">
+                <strong>Sign Up</strong></a> or <a href="login.php"><strong>Login!</strong></a> and you'll be able to:
+            </p>
 
             <span class="glyphicon glyphicon-ok glyphicon-ok-list"></span>
             <p class="index-page-3">place, update and delete your adverts</p>
@@ -34,14 +36,9 @@ $this->title = 'Site/Index';
             <p class="index-page-3">add the most interesting adverts to bookmarks</p>
 
             <span class="glyphicon glyphicon-ok glyphicon-ok-list"></span>
-            <p class="index-page-3">contact authors for more information and making a deal</p>
-
-            <span class="glyphicon glyphicon-ok glyphicon-ok-list"></span>
-            <p class="index-page-3">other users will also be able to contact you to get your goods or services</p>
+            <p class="index-page-3">communicate with authors and customers for more information and making a deal</p>
 
         </div>
-
-        <p class="index-page-2">Already have an account? Just <a href="login.php"><strong>Login!</strong></a></p>
     </div>
 
 

@@ -12,8 +12,6 @@ use yii\helpers\Url;
 /* @var $adv app\models\Advert */
 
 $this->title = 'Upload Pictures';
-
-$adv = new Advert();
 ?>
 
 <div class="site-form">
@@ -27,7 +25,7 @@ $adv = new Advert();
         'pluginOptions' => ['previewFileType' => 'any']
     ]) ?>
 
-    <?= Html::a('Skip this step', [Url::toRoute(['view', 'id' => $adv->getId()])], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a('Skip this step', [Url::toRoute(['view', 'id' => Advert::getId()])], ['class' => 'btn btn-primary']) ?>
 
 
     <?php ActiveForm::end(); ?>

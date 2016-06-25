@@ -60,6 +60,11 @@ class Advert extends ActiveRecord
             ['city_id', 'required', 'message' => 'City cannot be blank'],
             ['category_id', 'required', 'message' => 'Category cannot be blank'],
             ['subcategory_id', 'required', 'message' => 'Subcategory cannot be blank'],
+            [
+                ['title', 'text'], 'match',
+                'pattern' => '/[a-zA-Z0-9!\?,\.:;\(\)]/',
+                'message' => 'This field should not contain next symbols: ` ~ @ # $ % ^ & * / \\ < >',
+            ],
         ];
     }
 
@@ -177,45 +182,39 @@ class Advert extends ActiveRecord
      * returns phone and skype of the user
      * 
      * @param $userId
-     * @param $myId
      * @return mixed
      */
-    public function getContacts($userId, $myId)
+    public function getContacts($userId)
     {
         $user = User::findOne(['id' =>$userId]);
         $notSet = '<span class="not-set">not set</span>';
-
-        if ($userId == $myId) {
-            $contacts['Phone'] = empty($user->phone) ? $notSet : $user->phone;
-            $contacts['Skype'] = empty($user->skype) ? $notSet : $user->skype;
-        } else {
+        if (Yii::$app->user->isGuest || $userId !== Yii::$app->user->identity->getId()) {
             $contacts['Phone'] = empty($user->phone) ? '' : $user->phone;
             $contacts['Skype'] = empty($user->skype) ? '' : $user->skype;
+        } else {
+            $contacts['Phone'] = empty($user->phone) ? $notSet : $user->phone;
+            $contacts['Skype'] = empty($user->skype) ? $notSet : $user->skype;
         }
-
         return $contacts;
     }
 
     /**
      * returns e-mail or a link to contact the author by e-mail
-     * 
+     *
      * @param $userId
-     * @param $myId
      * @return string
      */
-    public function contact($userId, $myId)
+    public function contact($userId)
     {
         $user = User::findOne(['id' =>$userId]);
-
-        if ($userId == $myId) {
-            $contact = '<p class="contact">My contacts: </p>';
-            $contact .= '<p><strong>E-mail: </strong>' . $user->email . '</p>';
-        } else {
+        if (Yii::$app->user->isGuest || $userId !== Yii::$app->user->identity->getId()) {
             $contact = '<p class="contact">Contact the author: ' . $user->getFullName() . '</p>';
             $contact .= '<p><a href="' . Url::toRoute(['site/contact-author', 'id' => $_GET['id']]) . '">
                         <strong>Write an e-mail</strong></a></p>';
+        } else {
+            $contact = '<p class="contact">My contacts: </p>';
+            $contact .= '<p><strong>E-mail: </strong>' . $user->email . '</p>';
         }
-
         return $contact;
     }
 
@@ -227,37 +226,23 @@ class Advert extends ActiveRecord
     public function deletePic()
     {
         $advert = Advert::findOne(['id' => $_GET['id']]);
-        $un = substr($_POST['delete_pic'], 1);
+        
+//        $a = substr($_POST['delete_pic'], 1);
+        $un = '/home/vol3_3/byethost7.com/b7_18395569/htdocs' . $_POST['delete_pic'];
+//        $un = Yii::$app->urlManager->createAbsoluteUrl($a);
+//        var_dump($un); die;
+        
         if ($_POST['delete_pic'] == $advert->avatar) {
             $advert->avatar = null;
             if ($advert->save()) {
                 return unlink($un);
             }
         }
+        
         return unlink($un);
     }
 
-    /**
-     * Returns a picture to show as the main one for the advert
-     *
-     * @param $id
-     * @return string
-     */
-    public function picture($id)
-    {
-        $advert = Advert::findOne(['id' => $id]);
-        if (file_exists('img/page_' . $id)) {
-            if (count(scandir('img/page_' . $id)) > 2) {
-                if ($advert->avatar !== null) {
-                    return substr($advert->avatar, 1);
-                }
-                return 'img/page_' . $id . '/' . scandir('img/page_' . $id)[2];
-            }
-        }
-        return 'img/default.png';
-    }
-
-    public function getId()
+    public static function getId()
     {
         $advert = Advert::find()
             ->where(['user_id' => Yii::$app->user->identity->getId()])
@@ -275,26 +260,51 @@ class Advert extends ActiveRecord
      */
     public static function getAvatar($id)
     {
-        $src = Yii::$app->urlManager->createAbsoluteUrl('img/default.png');
+        $src = Yii::$app->urlManager->createAbsoluteUrl('web/img/default.png');
         $advert = Advert::findOne(['id' => $id]);
+        
         if (file_exists('img/page_' . $id)) {
             if (count(scandir('img/page_' . $id)) > 2) {
                 $src = Yii::$app->urlManager->createAbsoluteUrl(
-                    'img/page_' . $id . '/' . scandir('img/page_' . $id)[2]
+                    'web/img/page_' . $id . '/' . scandir('img/page_' . $id)[2]
                 );
+                
                 if ($advert->avatar !== null) {
                     $src = Yii::$app->urlManager->createAbsoluteUrl(substr($advert->avatar, 1));
                 }
             }
         }
-        return Html::img($src, ['class' => 'avatar']);
+
+        return Html::a(Html::img($src, ['class' => 'avatar']), [Url::toRoute(['advert/view', 'id' => $id])]);
     }
-    
+
+    /**
+     * gets the price according to a chosen currency
+     *
+     * @param $id
+     * @return mixed
+     */
     public static function countPrice($id)
     {
         $advert = Advert::find()->where(['id' => $id])->asArray()->one();
-        
-        return round($advert['price'] * Currency::getExchangeRates()[$advert['currency']] /
-            Currency::getExchangeRates()[Yii::$app->user->identity->getCurrency()], 2);
+        $rates = Yii::$app->user->isGuest ? Currency::getExchangeRates()['usd'] :
+            Currency::getExchangeRates()[Yii::$app->user->identity->getCurrency()];
+
+        return round($advert['price'] * Currency::getExchangeRates()[$advert['currency']] / $rates, 2);
+    }
+
+    /**
+     * shows if the string is a date
+     *
+     * @param $date
+     * @return bool
+     */
+    public static function isDate($date)
+    {
+        if (is_numeric(strtotime($date))) {
+            return true;
+        }
+
+        return false;
     }
 }

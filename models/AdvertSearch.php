@@ -55,12 +55,12 @@ class AdvertSearch extends Advert
             return $dataProvider;
         }
         if (Yii::$app->request->get('search') !== null) {
-            if(Yii::$app->request->get('before') !== '') {
+            if(Yii::$app->request->get('before') !== '' && Advert::isDate($_GET['before'])) {
                 $before = strtotime(Yii::$app->request->get('before'));
             } else {
                 $before = 0;
             }
-            if(Yii::$app->request->get('after') !== '') {
+            if(Yii::$app->request->get('after') !== '' && Advert::isDate($_GET['after'])) {
                 $after = strtotime(Yii::$app->request->get('after')) + 86399;
             } else {
                 $after = time();

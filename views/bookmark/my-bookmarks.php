@@ -22,6 +22,7 @@ $this->title = 'My Bookmarks';
             'filterModel' => $searchModel,
             'showHeader' => false,
             'formatter' => ['class' => 'yii\i18n\Formatter','nullDisplay' => '0'],
+            'tableOptions' => ['class' => 'table table-striped table-hover'],
             'columns' => [
                 [
                     'label' => 'image',

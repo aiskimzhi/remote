@@ -64,16 +64,16 @@ function insertCurrency()
     var currency = $('#select-currency option:selected').val();
     var a = 'currency=' + currency;
     var url = $('#select-currency').attr("name");
-    var style = 'border: solid #4d9f52 3px; ' +
-                '-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075); ' +
-                'box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075); width: 100px; margin-top: 10px;';
+    var style = 'border: solid #4d9f52 3px; background-color: #62e17f; ' +
+        '-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075); ' +
+        'box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075); width: 100px; margin-top: 10px;';
     $.ajax({
         url: url,
         type: 'post',
         data: a,
         success: function () {
             $('#select-currency').attr('style', style);
-            setTimeout(renew(), 100000);
+            setTimeout(renew(), 5000);
         }
     });
 }
@@ -84,13 +84,17 @@ function renew() {
 
 function setMinDate()
 {
-    var selected = $('#before-field').datepicker('getDate');
-    var n = selected.toString();
-    var a = [];
-    a = n.split(' ');
-    var b = a[1] + ' ' + a[2] + ', ' + a[3];
+    var selected = $('#before-field').val();
+    $.ajax({
+        url: 'advert/date',
+        method: 'post',
+        data: 'date=' + selected,
+        success: function ( data ) {
+            $('#before-field').attr('class', data );
+        }
+    });
 
-    return $('#after-field').datepicker('option', 'minDate', b);
+    return $('#after-field').datepicker('option', 'minDate', selected);
 }
 
 function resetDate()

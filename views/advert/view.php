@@ -46,7 +46,8 @@ $this->title = $model->title;
         <br><br>
         
         <div class="advert-title">
-            <strong>Price: </strong><?= Advert::countPrice($model->id) ?> <?= $model->user->currency ?>
+            <strong>Price: </strong><?= Advert::countPrice($model->id) ?>
+            <?= strtoupper(Yii::$app->user->isGuest ? 'usd' : Yii::$app->user->identity->getCurrency()) ?>
         </div>
     </div>
 
@@ -61,7 +62,7 @@ $this->title = $model->title;
 
     <div class="advert-buttons">
         <?php $url = Url::toRoute(['bookmark/add-to-bookmarks', 'id' => $model->id]); ?>
-        <?= Html::input('submit', 'button', $value,
+        <?= Yii::$app->user->isGuest ? '' : Html::input('submit', 'button', $value,
             [
                 'id' => 'book',
                 'class' => 'btn btn-primary',

@@ -408,7 +408,7 @@ a.navbar-brand {
     border-radius: 10px;
     margin-left: 20px;
     margin-top: 48px;
-    height: 437px;
+    height: 353px;
 }
 
 .rates-1 {
@@ -422,4 +422,12 @@ a.navbar-brand {
 
 .rates-3 {
     margin-right: 15px;
+}
+
+.my-error {
+    border-color: #A94442;
+}
+
+.my-success {
+    border-color: #3c763d;
 }
